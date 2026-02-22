@@ -343,7 +343,7 @@ const GetStarted = () => {
                         <Globe className="w-6 h-6 mb-2 text-primary" />
                         <h3 className="font-semibold font-display">Custom Domain</h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                          yourdomain.com (+$3/mo)
+                          yourdomain.com (included free)
                         </p>
                       </button>
                     </div>
@@ -358,7 +358,7 @@ const GetStarted = () => {
                           className="mt-1.5"
                         />
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          We'll send you DNS instructions after setup.
+                          You'll need to update your DNS records (A record pointing to our servers). We'll send you the exact instructions after setup.
                         </p>
                       </div>
                     )}
@@ -411,7 +411,7 @@ const GetStarted = () => {
                       {domainChoice === "custom" && (
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Custom Domain</span>
-                          <span className="font-bold">+$3/mo</span>
+                          <span className="font-bold text-primary">Included</span>
                         </div>
                       )}
                       <div className="border-t border-border mt-3 pt-3 flex justify-between items-center">
