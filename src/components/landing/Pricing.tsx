@@ -32,8 +32,8 @@ const Pricing = () => {
             <div className="text-sm font-medium text-muted-foreground mb-2">One-time</div>
             <h3 className="text-2xl font-bold font-display mb-1">Migration</h3>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-4xl font-bold font-display">$29</span>
-              <span className="text-muted-foreground">- $49</span>
+              <span className="text-4xl font-bold font-display">Free</span>
+              <span className="text-muted-foreground line-through ml-1">$29–$49</span>
             </div>
             <ul className="space-y-3 mb-8">
               {["GitHub repo setup", "Database config", "Build verification", "First deployment", "Your code, your repo"].map((item) => (
@@ -89,9 +89,10 @@ const Pricing = () => {
             <div className="text-sm font-medium text-muted-foreground mb-2">Pay-per-use</div>
             <h3 className="text-2xl font-bold font-display mb-1">Fixes</h3>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-4xl font-bold font-display">$5</span>
+              <span className="text-4xl font-bold font-display">$3</span>
               <span className="text-muted-foreground">/fix</span>
             </div>
+            <p className="text-xs text-primary font-medium mb-4">🔥 First 30 fixes at $3 — then $5/fix</p>
             <ul className="space-y-3 mb-8">
               {["AI-powered repairs", "Preview before deploy", "Automatic rollback", "Plain language requests", "Complex quoted separately"].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm">
@@ -121,7 +122,7 @@ const Pricing = () => {
               { label: "Stay on Lovable", cost: "$20 – $100+", bar: 85, color: "bg-muted-foreground/30" },
               { label: "Self-host (DIY)", cost: "$0 – $20", bar: 25, note: "Requires technical skills", color: "bg-muted-foreground/30" },
               { label: "Hire a freelancer", cost: "$50 – $200/hr", bar: 95, color: "bg-muted-foreground/30" },
-              { label: "LavaBowl", cost: "$5 + fixes", bar: 15, color: "gradient-lava" },
+              { label: "LavaBowl", cost: "$5 + $3/fix", bar: 12, color: "gradient-lava" },
             ].map((item) => (
               <div key={item.label}>
                 <div className="flex justify-between text-sm mb-1">

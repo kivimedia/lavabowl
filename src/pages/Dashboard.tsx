@@ -125,7 +125,7 @@ const Dashboard = () => {
                 Request a Fix
               </CardTitle>
               <CardDescription>
-                Describe the issue or change you need in plain language. $5 flat rate per fix.
+                Describe the issue or change you need in plain language. $3 flat rate per fix (first 30 fixes).
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -144,7 +144,7 @@ const Dashboard = () => {
                   disabled={!fixDescription.trim()}
                 >
                   <Send className="w-4 h-4 mr-1" />
-                  Submit Fix — $5
+                  Submit Fix — $3
                 </Button>
               </div>
             </CardContent>
