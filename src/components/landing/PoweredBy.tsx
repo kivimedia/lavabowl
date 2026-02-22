@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Bot, Cpu, Sparkles, Code2, DollarSign } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const models = [
   { name: "Claude Code", version: "Opus 4.6", description: "Anthropic's advanced coding agent" },
@@ -31,25 +32,33 @@ const PoweredBy = () => {
         </motion.div>
 
         <div className="grid sm:grid-cols-3 gap-5 max-w-3xl mx-auto mb-12">
-          {models.map((model, i) => (
-            <motion.div
-              key={model.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="rounded-2xl border border-border bg-card p-6 text-center hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
-            >
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                <Code2 className="w-5 h-5 text-primary" />
-              </div>
-              <h3 className="font-semibold font-display mb-1">
-                {model.name}{" "}
-                <span className="text-primary text-xs font-medium">{model.version}</span>
-              </h3>
-              <p className="text-sm text-muted-foreground">{model.description}</p>
-            </motion.div>
-          ))}
+          {models.map((model, i) => {
+            const isComingSoon = model.name === "GPT-4o" || model.name === "Gemini";
+            return (
+              <motion.div
+                key={model.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative rounded-2xl border border-border bg-card p-6 text-center hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300${isComingSoon ? " opacity-60" : ""}`}
+              >
+                {isComingSoon && (
+                  <Badge className="absolute top-3 right-3 text-xs" variant="secondary">
+                    Coming Soon
+                  </Badge>
+                )}
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <Code2 className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-semibold font-display mb-1">
+                  {model.name}{" "}
+                  <span className="text-primary text-xs font-medium">{model.version}</span>
+                </h3>
+                <p className="text-sm text-muted-foreground">{model.description}</p>
+              </motion.div>
+            );
+          })}
         </div>
 
         <motion.div

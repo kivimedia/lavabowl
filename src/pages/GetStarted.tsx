@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Flame,
@@ -18,8 +17,12 @@ import {
   CheckCircle2,
   Info,
   SkipForward,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCreateProject } from "@/hooks/use-projects";
+import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/hooks/use-toast";
 
 const TOTAL_STEPS = 6;
 
@@ -34,28 +37,36 @@ const stepMeta = [
 
 const GetStarted = () => {
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
+  const createProject = useCreateProject();
+  const { user, dbUser } = useAuth();
+  const { toast } = useToast();
 
-  // Step 1
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // Step 1 — pre-fill from auth context
+  const [name, setName] = useState(dbUser?.fullName || user?.user_metadata?.full_name || "");
+  const [email, setEmail] = useState(dbUser?.email || user?.email || "");
 
-  // Step 2
+  // Step 2 — Project source
   const [projectSource, setProjectSource] = useState<"github" | "zip" | "">(
     ""
   );
   const [githubUrl, setGithubUrl] = useState("");
+  const [projectName, setProjectName] = useState("");
 
-  // Step 3
+  // Step 3 — Supabase
   const [supabaseUrl, setSupabaseUrl] = useState("");
   const [anonKey, setAnonKey] = useState("");
   const [serviceRoleKey, setServiceRoleKey] = useState("");
 
-  // Step 4 (Domain)
-
+  // Step 4 — Domain
   const [domainChoice, setDomainChoice] = useState<"subdomain" | "custom" | "">(
     ""
   );
   const [customDomain, setCustomDomain] = useState("");
+  const [subdomain, setSubdomain] = useState("");
+
+  // Submission state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const prev = () => setStep((s) => Math.max(s - 1, 1));
@@ -66,8 +77,9 @@ const GetStarted = () => {
         return name.trim() && email.trim();
       case 2:
         return (
-          (projectSource === "github" && githubUrl.trim()) ||
-          projectSource === "zip"
+          projectName.trim() &&
+          ((projectSource === "github" && githubUrl.trim()) ||
+            projectSource === "zip")
         );
       case 3:
         return supabaseUrl.trim() && anonKey.trim();
@@ -80,6 +92,39 @@ const GetStarted = () => {
     }
   };
 
+  // Derive subdomain from project name
+  const deriveSubdomain = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 30);
+  };
+
+  const handleConfirmMigration = async () => {
+    setIsSubmitting(true);
+    try {
+      const derivedSubdomain = subdomain || deriveSubdomain(projectName);
+      await createProject.mutateAsync({
+        name: projectName,
+        githubRepoUrl: projectSource === "github" ? githubUrl : undefined,
+        supabaseUrl: supabaseUrl || undefined,
+        supabaseAnonKey: anonKey || undefined,
+        subdomain: derivedSubdomain || undefined,
+        customDomain: domainChoice === "custom" ? customDomain : undefined,
+      });
+      next(); // move to step 6 (all set)
+    } catch (err) {
+      toast({
+        title: "Failed to create project",
+        description: err instanceof Error ? err.message : "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,9 +155,9 @@ const GetStarted = () => {
             return (
               <button
                 key={s.label}
-                onClick={() => step !== 7 && setStep(stepNum)}
+                onClick={() => step !== 7 && step > stepNum && setStep(stepNum)}
                 className="flex flex-col items-center gap-1.5 flex-1 group"
-                disabled={step === 7}
+                disabled={step === 6 || stepNum > step}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 cursor-pointer group-hover:scale-110 group-hover:shadow-md ${
@@ -193,6 +238,21 @@ const GetStarted = () => {
                       <p className="text-muted-foreground">
                         How would you like to share your Lovable project with us?
                       </p>
+                    </div>
+                    <div>
+                      <Label htmlFor="project-name">Project Name</Label>
+                      <Input
+                        id="project-name"
+                        placeholder="My Portfolio Site"
+                        value={projectName}
+                        onChange={(e) => {
+                          setProjectName(e.target.value);
+                          if (!subdomain) {
+                            // auto-derive subdomain hint
+                          }
+                        }}
+                        className="mt-1.5"
+                      />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <button
@@ -329,7 +389,7 @@ const GetStarted = () => {
                         <Globe className="w-6 h-6 mb-2 text-primary" />
                         <h3 className="font-semibold font-display">Free Subdomain</h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                          myproject.lavabowl.app
+                          {deriveSubdomain(projectName) || "myproject"}.lavabowl.app
                         </p>
                       </button>
                       <button
@@ -347,6 +407,20 @@ const GetStarted = () => {
                         </p>
                       </button>
                     </div>
+                    {domainChoice === "subdomain" && (
+                      <div>
+                        <Label htmlFor="subdomain">Subdomain</Label>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <Input
+                            id="subdomain"
+                            placeholder={deriveSubdomain(projectName) || "myproject"}
+                            value={subdomain}
+                            onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                          />
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">.lavabowl.app</span>
+                        </div>
+                      </div>
+                    )}
                     {domainChoice === "custom" && (
                       <div>
                         <Label htmlFor="custom-domain">Your Domain</Label>
@@ -380,11 +454,11 @@ const GetStarted = () => {
                         <span className="text-sm font-medium">{name}</span>
                       </div>
                       <div className="flex justify-between items-center py-3 border-b border-border">
-                        <span className="text-sm text-muted-foreground">Email</span>
-                        <span className="text-sm font-medium">{email}</span>
+                        <span className="text-sm text-muted-foreground">Project</span>
+                        <span className="text-sm font-medium">{projectName}</span>
                       </div>
                       <div className="flex justify-between items-center py-3 border-b border-border">
-                        <span className="text-sm text-muted-foreground">Project</span>
+                        <span className="text-sm text-muted-foreground">Source</span>
                         <span className="text-sm font-medium">
                           {projectSource === "github" ? githubUrl : "ZIP Upload"}
                         </span>
@@ -392,7 +466,9 @@ const GetStarted = () => {
                       <div className="flex justify-between items-center py-3 border-b border-border">
                         <span className="text-sm text-muted-foreground">Domain</span>
                         <span className="text-sm font-medium">
-                          {domainChoice === "custom" ? customDomain : "Free subdomain"}
+                          {domainChoice === "custom"
+                            ? customDomain
+                            : `${subdomain || deriveSubdomain(projectName) || "myproject"}.lavabowl.app`}
                         </span>
                       </div>
                     </div>
@@ -423,10 +499,18 @@ const GetStarted = () => {
                       </p>
                     </div>
                     <Button
-                      onClick={next}
+                      onClick={handleConfirmMigration}
+                      disabled={isSubmitting}
                       className="w-full gradient-lava border-0 text-white h-12 rounded-xl text-base"
                     >
-                      Confirm & Start Migration
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Creating Project...
+                        </>
+                      ) : (
+                        "Confirm & Start Migration"
+                      )}
                     </Button>
                   </div>
                 )}
@@ -476,7 +560,13 @@ const GetStarted = () => {
                         </div>
                         <div className="pb-5">
                           <p className="font-semibold text-sm text-muted-foreground">Deploy to hosting</p>
-                          <p className="text-xs text-muted-foreground">Your app goes live on {domainChoice === "custom" ? customDomain : "your subdomain"}.</p>
+                          <p className="text-xs text-muted-foreground">
+                            Your app goes live on{" "}
+                            {domainChoice === "custom"
+                              ? customDomain
+                              : `${subdomain || deriveSubdomain(projectName)}.lavabowl.app`}
+                            .
+                          </p>
                         </div>
                       </div>
                       <div className="flex gap-4">
@@ -485,7 +575,11 @@ const GetStarted = () => {
                         </div>
                         <div>
                           <p className="font-semibold text-sm text-muted-foreground">SSL & DNS setup</p>
-                          <p className="text-xs text-muted-foreground">{domainChoice === "custom" ? "We'll email you DNS instructions for your custom domain." : "Automatic — nothing to configure."}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {domainChoice === "custom"
+                              ? "We'll email you DNS instructions for your custom domain."
+                              : "Automatic — nothing to configure."}
+                          </p>
                         </div>
                       </div>
                     </div>

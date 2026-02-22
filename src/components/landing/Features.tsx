@@ -15,7 +15,7 @@ const features = [
   {
     icon: Wrench,
     title: "AI-Powered Fixes",
-    description: "Something breaks? Submit a fix request and our AI engine patches it, tests it, and deploys - $5 flat per fix.",
+    description: "Something breaks? Submit a fix request and our AI engine patches it, tests it, and deploys - $3 per fix.",
   },
   {
     icon: Shield,

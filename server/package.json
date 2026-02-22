@@ -1,0 +1,33 @@
+{
+  "name": "lavabowl-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "hono": "^4.7.0",
+    "@hono/node-server": "^1.13.0",
+    "@hono/zod-validator": "^0.4.0",
+    "drizzle-orm": "^0.38.0",
+    "@neondatabase/serverless": "^0.10.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "@anthropic-ai/sdk": "^0.39.0",
+    "stripe": "^17.5.0",
+    "octokit": "^4.1.0",
+    "zod": "^3.25.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "tsup": "^8.3.0",
+    "drizzle-kit": "^0.30.0",
+    "typescript": "^5.8.0",
+    "@types/node": "^22.16.0"
+  }
+}

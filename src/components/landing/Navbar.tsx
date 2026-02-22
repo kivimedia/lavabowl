@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Flame } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/auth-context";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, loading } = useAuth();
 
   const navLinks = [
     { label: "Features", href: "#features" },
@@ -37,14 +39,24 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Link to="/dashboard">
-            <Button variant="ghost" size="sm">Log In</Button>
-          </Link>
-          <Link to="/get-started">
-            <Button size="sm" className="gradient-lava border-0 text-white">
-              Get Started
-            </Button>
-          </Link>
+          {!loading && user ? (
+            <Link to="/dashboard">
+              <Button size="sm" className="gradient-lava border-0 text-white">
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm">Log In</Button>
+              </Link>
+              <Link to="/signup">
+                <Button size="sm" className="gradient-lava border-0 text-white">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -74,11 +86,26 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <Link to="/get-started" onClick={() => setMobileOpen(false)}>
-                <Button className="w-full gradient-lava border-0 text-white mt-2">
-                  Get Started
-                </Button>
-              </Link>
+              {!loading && user ? (
+                <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                  <Button className="w-full gradient-lava border-0 text-white mt-2">
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" className="w-full mt-2">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/signup" onClick={() => setMobileOpen(false)}>
+                    <Button className="w-full gradient-lava border-0 text-white">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}

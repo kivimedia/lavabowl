@@ -60,7 +60,7 @@ const Hero = () => {
             </span>
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500" />
-              $5/fix flat rate
+              From $3/fix
             </span>
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500" />
