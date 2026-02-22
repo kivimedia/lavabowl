@@ -92,7 +92,7 @@ const Pricing = () => {
               <span className="text-4xl font-bold font-display">$3</span>
               <span className="text-muted-foreground">/fix</span>
             </div>
-            <p className="text-xs text-primary font-medium mb-4">🔥 First 30 fixes at $3 — then $5/fix</p>
+            <p className="text-xs text-primary font-medium mb-4">🔥 First 30 fixes at $3 - then $5/fix</p>
             <ul className="space-y-3 mb-8">
               {["AI-powered repairs", "Preview before deploy", "Automatic rollback", "Plain language requests", "Complex quoted separately"].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm">
