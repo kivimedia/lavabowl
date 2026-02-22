@@ -1,35 +1,16 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
+// Vercel Serverless Function Entry Point
+// Uses the full Hono app from server/src/app.ts with manual Node.js adapter
+// (hono/vercel handle() causes FUNCTION_INVOCATION_TIMEOUT)
 
-const app = new Hono().basePath("/api");
+import { app } from "../server/src/app.js";
 
-app.use(
-  "*",
-  cors({
-    origin: [
-      "https://lavabowl.com",
-      "https://www.lavabowl.com",
-      "http://localhost:8080",
-    ],
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
-
-app.get("/health", (c) =>
-  c.json({ status: "ok", timestamp: new Date().toISOString(), env: "vercel" })
-);
-
-app.all("/*", (c) =>
-  c.json({ msg: "api works", path: c.req.path, method: c.req.method })
-);
-
-// Use manual fetch-to-response conversion instead of hono/vercel handle()
 export default async function handler(req: any, res: any) {
   try {
-    // Build a Request from the Node.js req
-    const url = new URL(req.url || "/", `https://${req.headers.host || "localhost"}`);
+    // Build a Web Request from Node.js IncomingMessage
+    const protocol = req.headers["x-forwarded-proto"] || "https";
+    const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
+    const url = new URL(req.url || "/", `${protocol}://${host}`);
+
     const headers = new Headers();
     for (const [key, value] of Object.entries(req.headers)) {
       if (value) headers.set(key, Array.isArray(value) ? value.join(", ") : value as string);
@@ -37,7 +18,6 @@ export default async function handler(req: any, res: any) {
 
     let body: ReadableStream | null = null;
     if (req.method !== "GET" && req.method !== "HEAD") {
-      // Read the body
       const chunks: Buffer[] = [];
       for await (const chunk of req) {
         chunks.push(Buffer.from(chunk));
@@ -46,7 +26,7 @@ export default async function handler(req: any, res: any) {
       if (bodyBuffer.length > 0) {
         body = new ReadableStream({
           start(controller) {
-            controller.enqueue(bodyBuffer);
+            controller.enqueue(new Uint8Array(bodyBuffer));
             controller.close();
           },
         });
@@ -57,19 +37,26 @@ export default async function handler(req: any, res: any) {
       method: req.method,
       headers,
       body,
+      // @ts-ignore - duplex required for streaming request bodies
+      duplex: body ? "half" : undefined,
     });
 
+    // Call Hono's fetch handler
     const response = await app.fetch(request);
 
-    // Convert Hono Response to Node.js res
+    // Convert Web Response to Node.js response
     res.status(response.status);
     response.headers.forEach((value: string, key: string) => {
       res.setHeader(key, value);
     });
-    const responseBody = await response.text();
-    res.end(responseBody);
+
+    const responseBody = await response.arrayBuffer();
+    res.end(Buffer.from(responseBody));
   } catch (err: any) {
-    console.error("Handler error:", err);
-    res.status(500).json({ error: "Internal Server Error", message: err.message });
+    console.error("Vercel handler error:", err);
+    res.status(500).json({
+      error: "Internal Server Error",
+      message: process.env.NODE_ENV === "production" ? "An error occurred" : err.message,
+    });
   }
 }

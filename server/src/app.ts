@@ -26,7 +26,15 @@ app.use("*", logger());
 app.use(
   "/api/*",
   cors({
-    origin: process.env.APP_URL || "http://localhost:8080",
+    origin: (origin) => {
+      const allowed = [
+        process.env.APP_URL || "http://localhost:8080",
+        "https://lavabowl.com",
+        "https://www.lavabowl.com",
+        "http://localhost:8080",
+      ];
+      return allowed.includes(origin) ? origin : allowed[0];
+    },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,

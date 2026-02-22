@@ -12,15 +12,18 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Clean up expired entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (entry.resetTime < now) {
-      store.delete(key);
+// Clean up expired entries every 5 minutes (only in non-serverless environments)
+// In serverless, the store is ephemeral anyway
+if (typeof globalThis !== "undefined" && !(globalThis as any).__VERCEL) {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of store.entries()) {
+      if (entry.resetTime < now) {
+        store.delete(key);
+      }
     }
-  }
-}, 5 * 60 * 1000);
+  }, 5 * 60 * 1000);
+}
 
 interface RateLimitOptions {
   windowMs: number; // Time window in milliseconds
