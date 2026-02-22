@@ -433,40 +433,89 @@ const GetStarted = () => {
 
                 {/* STEP 6: All Set */}
                 {step === 6 && (
-                  <div className="text-center py-8 space-y-6">
-                    <div className="w-16 h-16 rounded-full gradient-lava flex items-center justify-center mx-auto">
-                      <Rocket className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold font-display mb-2">We're on it!</h2>
+                  <div className="space-y-8 py-4">
+                    {/* Celebration header */}
+                    <div className="text-center">
+                      <div className="w-20 h-20 rounded-full gradient-lava flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
+                        <Rocket className="w-10 h-10 text-white" />
+                      </div>
+                      <h2 className="text-3xl font-bold font-display mb-2">You're all set, {name.split(" ")[0] || "friend"}!</h2>
                       <p className="text-muted-foreground max-w-md mx-auto">
-                        We're verifying your build and setting up your hosting. You'll get an email at{" "}
-                        <strong className="text-foreground">{email}</strong> once your project is live.
+                        We've received everything we need. Here's what happens next.
                       </p>
                     </div>
-                    <div className="rounded-xl border border-border bg-muted/30 p-5 text-left space-y-3 max-w-sm mx-auto">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-primary" />
-                        <span className="text-sm">Project received</span>
+
+                    {/* Timeline */}
+                    <div className="rounded-2xl border border-border bg-muted/30 p-6 space-y-0 max-w-md mx-auto">
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <CheckCircle2 className="w-6 h-6 text-primary shrink-0" />
+                          <div className="w-0.5 h-full bg-primary/30 my-1" />
+                        </div>
+                        <div className="pb-5">
+                          <p className="font-semibold text-sm">Project received</p>
+                          <p className="text-xs text-muted-foreground">Your code and credentials are securely stored.</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full border-2 border-primary animate-pulse" />
-                        <span className="text-sm">Build verification in progress</span>
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="w-6 h-6 rounded-full border-2 border-primary bg-primary/10 flex items-center justify-center shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                          </div>
+                          <div className="w-0.5 h-full bg-border my-1" />
+                        </div>
+                        <div className="pb-5">
+                          <p className="font-semibold text-sm">Build verification</p>
+                          <p className="text-xs text-muted-foreground">We'll test your build to make sure everything compiles and runs. ~10 minutes.</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full border border-border" />
-                        <span className="text-sm text-muted-foreground">Deploying to hosting</span>
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="w-6 h-6 rounded-full border border-border shrink-0" />
+                          <div className="w-0.5 h-full bg-border my-1" />
+                        </div>
+                        <div className="pb-5">
+                          <p className="font-semibold text-sm text-muted-foreground">Deploy to hosting</p>
+                          <p className="text-xs text-muted-foreground">Your app goes live on {domainChoice === "custom" ? customDomain : "your subdomain"}.</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full border border-border" />
-                        <span className="text-sm text-muted-foreground">Going live</span>
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="w-6 h-6 rounded-full border border-border shrink-0" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-muted-foreground">SSL & DNS setup</p>
+                          <p className="text-xs text-muted-foreground">{domainChoice === "custom" ? "We'll email you DNS instructions for your custom domain." : "Automatic — nothing to configure."}</p>
+                        </div>
                       </div>
                     </div>
-                    <Link to="/dashboard">
-                      <Button variant="outline" className="rounded-xl">
-                        Go to Dashboard
-                      </Button>
-                    </Link>
+
+                    {/* What you'll get email */}
+                    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 max-w-md mx-auto">
+                      <div className="flex items-start gap-3">
+                        <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-semibold text-sm mb-1">Check your inbox</p>
+                          <p className="text-xs text-muted-foreground">
+                            We'll send a confirmation email to <strong className="text-foreground">{email}</strong> with your dashboard link, preview URL, and next steps. Usually within 15 minutes.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col items-center gap-3">
+                      <Link to="/dashboard">
+                        <Button className="gradient-lava border-0 text-white rounded-xl h-11 px-8">
+                          Go to Dashboard
+                        </Button>
+                      </Link>
+                      <Link to="/">
+                        <Button variant="ghost" size="sm" className="text-muted-foreground">
+                          Back to Home
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 )}
               </CardContent>
