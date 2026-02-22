@@ -40,7 +40,7 @@ const Navbar = () => {
           <Link to="/dashboard">
             <Button variant="ghost" size="sm">Log In</Button>
           </Link>
-          <Link to="/dashboard">
+          <Link to="/get-started">
             <Button size="sm" className="gradient-lava border-0 text-white">
               Get Started
             </Button>
@@ -74,7 +74,7 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+              <Link to="/get-started" onClick={() => setMobileOpen(false)}>
                 <Button className="w-full gradient-lava border-0 text-white mt-2">
                   Get Started
                 </Button>

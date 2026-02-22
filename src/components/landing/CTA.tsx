@@ -21,7 +21,7 @@ const CTA = () => {
             <p className="text-lg text-white/80 max-w-xl mx-auto mb-8">
               Migrate your Lovable project in under 30 minutes. Keep it running for $5/month.
             </p>
-            <Link to="/dashboard">
+            <Link to="/get-started">
               <Button
                 size="lg"
                 className="bg-white text-foreground hover:bg-white/90 text-lg px-8 h-14 rounded-xl font-semibold"
