@@ -121,14 +121,19 @@ const GetStarted = () => {
             const isActive = step === stepNum;
             const isDone = step > stepNum;
             return (
-              <div key={s.label} className="flex flex-col items-center gap-1.5 flex-1">
+              <button
+                key={s.label}
+                onClick={() => step !== 7 && setStep(stepNum)}
+                className="flex flex-col items-center gap-1.5 flex-1 group"
+                disabled={step === 7}
+              >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 cursor-pointer group-hover:scale-110 group-hover:shadow-md ${
                     isDone
                       ? "gradient-lava text-white"
                       : isActive
                       ? "border-2 border-primary text-primary bg-primary/10"
-                      : "border border-border text-muted-foreground"
+                      : "border border-border text-muted-foreground group-hover:border-primary/50 group-hover:text-primary"
                   }`}
                 >
                   {isDone ? (
@@ -139,12 +144,12 @@ const GetStarted = () => {
                 </div>
                 <span
                   className={`text-xs font-medium hidden sm:block ${
-                    isActive ? "text-foreground" : "text-muted-foreground"
+                    isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                   }`}
                 >
                   {s.label}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>
