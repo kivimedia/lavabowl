@@ -112,13 +112,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     // Create subscription record
+    const periodStart = (stripeSub as any).current_period_start;
+    const periodEnd = (stripeSub as any).current_period_end;
     await db.insert(subscriptions).values({
       userId: user.id,
       projectId: metadata.project_id,
       stripeSubscriptionId: subscriptionId,
       status: stripeSub.status,
-      currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
+      currentPeriodStart: periodStart ? new Date(periodStart * 1000) : new Date(),
+      currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : new Date(),
     });
 
     // Activate the project
@@ -158,9 +160,10 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 }
 
 async function handleInvoiceFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = typeof invoice.subscription === "string"
-    ? invoice.subscription
-    : invoice.subscription?.id;
+  const sub = (invoice as any).subscription;
+  const subscriptionId = typeof sub === "string"
+    ? sub
+    : sub?.id;
 
   if (!subscriptionId) return;
 
@@ -171,12 +174,14 @@ async function handleInvoiceFailed(invoice: Stripe.Invoice) {
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+  const periodStart = (subscription as any).current_period_start;
+  const periodEnd = (subscription as any).current_period_end;
   await db
     .update(subscriptions)
     .set({
       status: subscription.status,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      currentPeriodStart: periodStart ? new Date(periodStart * 1000) : new Date(),
+      currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : new Date(),
       updatedAt: new Date(),
     })
     .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
