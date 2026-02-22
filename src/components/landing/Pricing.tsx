@@ -66,7 +66,7 @@ const Pricing = () => {
               <span className="text-muted-foreground">/month</span>
             </div>
             <ul className="space-y-3 mb-8">
-              {["Shared VPS hosting", "SSL certificate", "Uptime monitoring", "Subdomain included", "Custom domain +$3/mo"].map((item) => (
+              {["Shared VPS hosting", "SSL certificate", "Uptime monitoring", "Subdomain included", "Custom domain included"].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm">
                   <Check className="w-4 h-4 text-primary shrink-0" />
                   {item}
