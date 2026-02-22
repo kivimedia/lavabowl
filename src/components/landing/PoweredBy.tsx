@@ -1,11 +1,10 @@
 import { motion } from "framer-motion";
-import { Bot, Cpu, Sparkles, Code2 } from "lucide-react";
+import { Bot, Cpu, Sparkles, Code2, DollarSign } from "lucide-react";
 
 const models = [
-  { name: "Claude Code", description: "Anthropic's advanced coding agent" },
-  { name: "GPT-4o", description: "OpenAI's multimodal powerhouse" },
-  { name: "Gemini", description: "Google's flagship AI model" },
-  { name: "Codex", description: "Purpose-built for code generation" },
+  { name: "Claude Code", version: "Opus 4.6", description: "Anthropic's advanced coding agent" },
+  { name: "GPT-4o", version: "5.3", description: "OpenAI's multimodal powerhouse" },
+  { name: "Gemini", version: "Pro 3.1", description: "Google's flagship AI model" },
 ];
 
 const PoweredBy = () => {
@@ -31,7 +30,7 @@ const PoweredBy = () => {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto mb-12">
+        <div className="grid sm:grid-cols-3 gap-5 max-w-3xl mx-auto mb-12">
           {models.map((model, i) => (
             <motion.div
               key={model.name}
@@ -44,7 +43,10 @@ const PoweredBy = () => {
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <Code2 className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="font-semibold font-display mb-1">{model.name}</h3>
+              <h3 className="font-semibold font-display mb-1">
+                {model.name}{" "}
+                <span className="text-primary text-xs font-medium">{model.version}</span>
+              </h3>
               <p className="text-sm text-muted-foreground">{model.description}</p>
             </motion.div>
           ))}
@@ -56,7 +58,7 @@ const PoweredBy = () => {
           viewport={{ once: true }}
           className="max-w-3xl mx-auto rounded-2xl border border-border bg-card p-8"
         >
-          <div className="grid md:grid-cols-3 gap-6 text-center">
+          <div className="grid md:grid-cols-2 gap-6 text-center">
             <div className="flex flex-col items-center gap-2">
               <Bot className="w-6 h-6 text-primary" />
               <h4 className="font-semibold font-display text-sm">Smart Routing</h4>
@@ -67,12 +69,10 @@ const PoweredBy = () => {
               <h4 className="font-semibold font-display text-sm">Model Agnostic</h4>
               <p className="text-xs text-muted-foreground">New models get added as they launch - you always get the best</p>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <h4 className="font-semibold font-display text-sm">Human Verified</h4>
-              <p className="text-xs text-muted-foreground">Every AI fix is reviewed and tested before it touches your project</p>
-            </div>
           </div>
+          <p className="text-center text-primary font-semibold mt-6 text-sm">
+            Pay only on fixes and updates when needed
+          </p>
         </motion.div>
       </div>
     </section>
