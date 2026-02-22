@@ -24,7 +24,7 @@ const mockProject = {
   status: "online",
   uptime: "99.8%",
   lastDeployed: "Feb 18, 2026",
-  plan: "Hosting — $5/mo",
+  plan: "Hosting - $5/mo",
 };
 
 const mockFixes = [
@@ -144,7 +144,7 @@ const Dashboard = () => {
                   disabled={!fixDescription.trim()}
                 >
                   <Send className="w-4 h-4 mr-1" />
-                  Submit Fix — $3
+                  Submit Fix - $3
                 </Button>
               </div>
             </CardContent>

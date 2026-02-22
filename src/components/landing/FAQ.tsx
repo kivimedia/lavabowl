@@ -9,7 +9,7 @@ import {
 const faqs = [
   {
     q: "Do I need any technical skills?",
-    a: "None. You give us your Lovable project and database credentials, and we handle everything — migration, hosting, and fixes.",
+    a: "None. You give us your Lovable project and database credentials, and we handle everything - migration, hosting, and fixes.",
   },
   {
     q: "What happens to my database?",

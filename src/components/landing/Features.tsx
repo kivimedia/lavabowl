@@ -5,7 +5,7 @@ const features = [
   {
     icon: GitBranch,
     title: "Project Migration",
-    description: "We export your Lovable project to GitHub, configure your database connection, and deploy it — you own the code.",
+    description: "We export your Lovable project to GitHub, configure your database connection, and deploy it - you own the code.",
   },
   {
     icon: Server,
@@ -15,7 +15,7 @@ const features = [
   {
     icon: Wrench,
     title: "AI-Powered Fixes",
-    description: "Something breaks? Submit a fix request and our AI engine patches it, tests it, and deploys — $5 flat per fix.",
+    description: "Something breaks? Submit a fix request and our AI engine patches it, tests it, and deploys - $5 flat per fix.",
   },
   {
     icon: Shield,

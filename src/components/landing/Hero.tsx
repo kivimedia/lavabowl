@@ -36,7 +36,7 @@ const Hero = () => {
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             We migrate your finished Lovable project to affordable hosting, keep it running, 
-            and fix things when they break — all for a fraction of what you're paying now.
+            and fix things when they break - all for a fraction of what you're paying now.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
