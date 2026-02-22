@@ -43,7 +43,7 @@ const Pricing = () => {
                 </li>
               ))}
             </ul>
-            <Link to="/dashboard">
+            <Link to="/get-started">
               <Button variant="outline" className="w-full rounded-xl">Get Started</Button>
             </Link>
           </motion.div>
@@ -73,7 +73,7 @@ const Pricing = () => {
                 </li>
               ))}
             </ul>
-            <Link to="/dashboard">
+            <Link to="/get-started">
               <Button className="w-full gradient-lava border-0 text-white rounded-xl">Get Started</Button>
             </Link>
           </motion.div>
@@ -101,7 +101,7 @@ const Pricing = () => {
                 </li>
               ))}
             </ul>
-            <Link to="/dashboard">
+            <Link to="/get-started">
               <Button variant="outline" className="w-full rounded-xl">Get Started</Button>
             </Link>
           </motion.div>

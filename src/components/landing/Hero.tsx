@@ -40,7 +40,7 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/dashboard">
+            <Link to="/get-started">
               <Button size="lg" className="gradient-lava border-0 text-white text-lg px-8 h-14 rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow">
                 Migrate My Project
                 <ArrowRight className="w-5 h-5 ml-1" />
