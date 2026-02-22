@@ -12,25 +12,21 @@ import {
   User,
   FolderGit2,
   Database,
-  Key,
   Globe,
   CreditCard,
   Rocket,
   CheckCircle2,
   Info,
-  Plus,
-  Trash2,
   SkipForward,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 6;
 
 const stepMeta = [
   { icon: User, label: "Your Info" },
   { icon: FolderGit2, label: "Your Project" },
   { icon: Database, label: "Supabase" },
-  { icon: Key, label: "Env Variables" },
   { icon: Globe, label: "Domain" },
   { icon: CreditCard, label: "Review & Pay" },
   { icon: Rocket, label: "All Set!" },
@@ -54,10 +50,8 @@ const GetStarted = () => {
   const [anonKey, setAnonKey] = useState("");
   const [serviceRoleKey, setServiceRoleKey] = useState("");
 
-  // Step 4
-  const [envVars, setEnvVars] = useState<{ key: string; value: string }[]>([]);
+  // Step 4 (Domain)
 
-  // Step 5
   const [domainChoice, setDomainChoice] = useState<"subdomain" | "custom" | "">(
     ""
   );
@@ -80,19 +74,12 @@ const GetStarted = () => {
       case 4:
         return true; // optional
       case 5:
-        return true; // optional
-      case 6:
         return true;
       default:
         return true;
     }
   };
 
-  const addEnvVar = () => setEnvVars([...envVars, { key: "", value: "" }]);
-  const removeEnvVar = (i: number) =>
-    setEnvVars(envVars.filter((_, idx) => idx !== i));
-  const updateEnvVar = (i: number, field: "key" | "value", val: string) =>
-    setEnvVars(envVars.map((v, idx) => (idx === i ? { ...v, [field]: val } : v)));
 
   return (
     <div className="min-h-screen bg-background">
@@ -321,56 +308,8 @@ const GetStarted = () => {
                   </div>
                 )}
 
-                {/* STEP 4: Environment Variables (optional) */}
+                {/* STEP 4: Domain (optional) */}
                 {step === 4 && (
-                  <div className="space-y-6">
-                    <div>
-                      <h2 className="text-2xl font-bold font-display mb-1">Environment variables</h2>
-                      <p className="text-muted-foreground">
-                        Does your project use any other API keys? (e.g., Stripe, SendGrid, etc.)
-                      </p>
-                    </div>
-                    {envVars.length > 0 && (
-                      <div className="space-y-3">
-                        {envVars.map((v, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                            <Input
-                              placeholder="VARIABLE_NAME"
-                              value={v.key}
-                              onChange={(e) => updateEnvVar(i, "key", e.target.value)}
-                              className="font-mono text-sm"
-                            />
-                            <Input
-                              placeholder="value"
-                              type="password"
-                              value={v.value}
-                              onChange={(e) => updateEnvVar(i, "value", e.target.value)}
-                            />
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeEnvVar(i)}
-                              className="shrink-0"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <Button variant="outline" onClick={addEnvVar} className="w-full rounded-xl">
-                      <Plus className="w-4 h-4 mr-1" /> Add Variable
-                    </Button>
-                    {envVars.length === 0 && (
-                      <p className="text-sm text-muted-foreground text-center">
-                        No extra variables? No problem - you can skip this step.
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* STEP 5: Domain (optional) */}
-                {step === 5 && (
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-2xl font-bold font-display mb-1">Choose your domain</h2>
@@ -426,8 +365,8 @@ const GetStarted = () => {
                   </div>
                 )}
 
-                {/* STEP 6: Review & Pay */}
-                {step === 6 && (
+                {/* STEP 5: Review & Pay */}
+                {step === 5 && (
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-2xl font-bold font-display mb-1">Review & confirm</h2>
@@ -456,14 +395,6 @@ const GetStarted = () => {
                           {domainChoice === "custom" ? customDomain : "Free subdomain"}
                         </span>
                       </div>
-                      {envVars.filter((v) => v.key).length > 0 && (
-                        <div className="flex justify-between items-center py-3 border-b border-border">
-                          <span className="text-sm text-muted-foreground">Env Variables</span>
-                          <span className="text-sm font-medium">
-                            {envVars.filter((v) => v.key).length} configured
-                          </span>
-                        </div>
-                      )}
                     </div>
                     <div className="rounded-xl border border-border bg-muted/30 p-5">
                       <div className="flex justify-between items-center mb-2">
@@ -500,8 +431,8 @@ const GetStarted = () => {
                   </div>
                 )}
 
-                {/* STEP 7: All Set */}
-                {step === 7 && (
+                {/* STEP 6: All Set */}
+                {step === 6 && (
                   <div className="text-center py-8 space-y-6">
                     <div className="w-16 h-16 rounded-full gradient-lava flex items-center justify-center mx-auto">
                       <Rocket className="w-8 h-8 text-white" />
@@ -544,7 +475,7 @@ const GetStarted = () => {
         </AnimatePresence>
 
         {/* Navigation Buttons */}
-        {step < 6 && (
+        {step < 5 && (
           <div className="flex items-center justify-between mt-6">
             <Button
               variant="ghost"
@@ -555,7 +486,7 @@ const GetStarted = () => {
               <ArrowLeft className="w-4 h-4 mr-1" /> Back
             </Button>
             <div className="flex items-center gap-2">
-              {(step === 4 || step === 5) && (
+              {step === 4 && (
                 <Button variant="ghost" onClick={next} className="rounded-xl text-muted-foreground">
                   <SkipForward className="w-4 h-4 mr-1" /> Skip
                 </Button>
