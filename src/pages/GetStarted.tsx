@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +52,21 @@ const GetStarted = () => {
   );
   const [githubUrl, setGithubUrl] = useState("");
   const [projectName, setProjectName] = useState("");
+  const [zipFile, setZipFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleZipFile = useCallback((file: File) => {
+    if (file.type === "application/zip" || file.type === "application/x-zip-compressed" || file.name.endsWith(".zip")) {
+      if (file.size > 100 * 1024 * 1024) {
+        toast({ title: "File too large", description: "Max file size is 100MB", variant: "destructive" });
+        return;
+      }
+      setZipFile(file);
+    } else {
+      toast({ title: "Invalid file", description: "Please upload a .zip file", variant: "destructive" });
+    }
+  }, [toast]);
 
   // Step 3 — Supabase
   const [supabaseUrl, setSupabaseUrl] = useState("");
@@ -297,13 +312,52 @@ const GetStarted = () => {
                       </div>
                     )}
                     {projectSource === "zip" && (
-                      <div className="rounded-xl border-2 border-dashed border-border p-8 text-center">
-                        <p className="text-muted-foreground">
-                          Drag & drop your ZIP file here, or click to browse
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Max 100MB - .zip files only
-                        </p>
+                      <div
+                        className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
+                          isDragging
+                            ? "border-primary bg-primary/5"
+                            : zipFile
+                            ? "border-primary/50 bg-primary/5"
+                            : "border-border hover:border-primary/40 hover:bg-muted/50"
+                        }`}
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                        onDragLeave={() => setIsDragging(false)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setIsDragging(false);
+                          const file = e.dataTransfer.files[0];
+                          if (file) handleZipFile(file);
+                        }}
+                      >
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".zip"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleZipFile(file);
+                          }}
+                        />
+                        {zipFile ? (
+                          <>
+                            <CheckCircle2 className="w-8 h-8 text-primary mx-auto mb-2" />
+                            <p className="font-medium">{zipFile.name}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {(zipFile.size / (1024 * 1024)).toFixed(1)} MB — Click to change
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-muted-foreground">
+                              Drag & drop your ZIP file here, or click to browse
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-2">
+                              Max 100MB - .zip files only
+                            </p>
+                          </>
+                        )}
                       </div>
                     )}
                     <div className="flex items-start gap-2 rounded-lg bg-muted/50 p-3">
