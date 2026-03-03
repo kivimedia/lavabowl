@@ -121,18 +121,32 @@ const GetStarted = () => {
     setIsSubmitting(true);
     try {
       const derivedSubdomain = subdomain || deriveSubdomain(projectName);
-      await createProject.mutateAsync({
-        name: projectName,
-        githubRepoUrl: projectSource === "github" ? githubUrl : undefined,
-        supabaseUrl: supabaseUrl || undefined,
-        supabaseAnonKey: anonKey || undefined,
-        subdomain: derivedSubdomain || undefined,
-        customDomain: domainChoice === "custom" ? customDomain : undefined,
-      });
-      next(); // move to step 6 (all set)
+
+      // Add a 30-second timeout so users aren't stuck forever
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+
+      try {
+        await createProject.mutateAsync({
+          name: projectName,
+          githubRepoUrl: projectSource === "github" ? githubUrl : undefined,
+          supabaseUrl: supabaseUrl || undefined,
+          supabaseAnonKey: anonKey || undefined,
+          subdomain: derivedSubdomain || undefined,
+          customDomain: domainChoice === "custom" ? customDomain : undefined,
+        });
+        clearTimeout(timeout);
+        next(); // move to step 6 (all set)
+      } catch (err) {
+        clearTimeout(timeout);
+        if (err instanceof DOMException && err.name === "AbortError") {
+          throw new Error("Request timed out. The server may be busy — please try again in a moment.");
+        }
+        throw err;
+      }
     } catch (err) {
       toast({
-        title: "Failed to create project",
+        title: "Migration failed",
         description: err instanceof Error ? err.message : "Something went wrong. Please try again.",
         variant: "destructive",
       });
