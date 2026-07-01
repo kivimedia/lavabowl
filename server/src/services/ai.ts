@@ -103,7 +103,7 @@ export async function generateFix(
     .join("\n\n");
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-5",
     max_tokens: 8192,
     system: `You are an expert web developer fixing code for a React + TypeScript project.
 You receive a fix request, triage information, and the relevant source files.
